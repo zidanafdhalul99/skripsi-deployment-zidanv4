@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analisis Kecelakaan Lalu Lintas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      #result {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Analisis Kecelakaan Lalu Lintas</h1>
+    <form id="classification-form">
+      <textarea
+        id="text"
+        name="text"
+        rows="4"
+        cols="50"
+        placeholder="Masukkan teks ulasan..."
+      ></textarea
+      ><br />
+      <button type="submit">Analisis Faktor Penyebab</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+      document
+        .getElementById("classification-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const text = document.getElementById("text").value;
+          fetch("/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "text=" + encodeURIComponent(text),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const resultDiv = document.getElementById("result");
+              resultDiv.innerHTML =
+                "Faktor Penyebab Kecelakaan adalah: " +
+                data[0].label
+                + "<br>Score: " +
+                data[0].score.toFixed(4);
+            });
+        });
+    </script>
+  </body>
+</html>
